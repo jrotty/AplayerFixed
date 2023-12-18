@@ -4,14 +4,15 @@
 }
 .aplayer.aplayer-fixed .aplayer-body{
     left: unset !important;
-width: 400px !important;
-padding-right: 0 !important;
+    width: 400px !important;
+    max-width: calc(100% - 18px);
+    padding-right: 0 !important;
 }
 .aplayer.aplayer-fixed .aplayer-list{
-width: 400px !important;
+    width: 400px !important;
 }
 .aplayer.aplayer-fixed .aplayer-miniswitcher {
-        right: unset;
-        left: -18px;
-        transform: rotate(180deg);
-      }
+    right: unset;
+    left: -18px;
+    transform: rotate(180deg);
+}

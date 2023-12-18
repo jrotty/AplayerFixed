@@ -8,9 +8,6 @@
     max-width: calc(100% - 18px);
     padding-right: 0 !important;
 }
-.aplayer.aplayer-fixed .aplayer-list{
-    width: 400px !important;
-}
 .aplayer.aplayer-fixed .aplayer-miniswitcher {
     right: unset;
     left: -18px;

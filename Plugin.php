@@ -4,7 +4,7 @@
  * 
  * @package AplayerFixed
  * @author 泽泽
- * @version 1.0.0
+ * @version 1.1.0
  * @link https://store.typecho.work
  */
 class AplayerFixed_Plugin implements Typecho_Plugin_Interface
@@ -20,6 +20,7 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
     {
         Typecho_Plugin::factory('Widget_Archive')->header = array('AplayerFixed_Plugin', 'header');
         Typecho_Plugin::factory('Widget_Archive')->footer = array('AplayerFixed_Plugin', 'footer');
+        Helper::addRoute("meting","/meting","AplayerFixed_Action",'action');
     }
     
     /**
@@ -30,7 +31,10 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
      * @return void
      * @throws Typecho_Plugin_Exception
      */
-    public static function deactivate(){}
+    public static function deactivate(){
+        Helper::removeRoute("meting");
+        self::deleteFile();
+    }
     
     /**
      * 获取插件配置面板
@@ -47,10 +51,14 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
 			_t('适配类型'), "背景音乐切换页面不间断播放需要主题支持InstantClick或常规Pjax技术，然后根据类型在这里选择一下即可");
         $form->addInput($type);
         
+        $getype = new Typecho_Widget_Helper_Form_Element_Radio(
+            'getype', array('netease' => '网易云音乐(默认)', 'tencent' => 'QQ音乐'), 'netease', '歌曲源',
+            '选择好后请在下方填写对应平台的歌单id即可');
+        $form->addInput($getype);
+        
         $gedanid = new Typecho_Widget_Helper_Form_Element_Text('gedanid', NULL, "876761898",
 			_t('歌单id'), _t('请填写网易云的歌单id'));
         $form->addInput($gedanid);
-        
         
 	    $order = new Typecho_Widget_Helper_Form_Element_Radio('order', array(
 	        "random" => "随机播放", 
@@ -64,6 +72,15 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
 			_t('显示位置'), "");
         $form->addInput($weizhi);
         
+        $t = new Typecho_Widget_Helper_Form_Element_Text(
+            'auth',
+            null,
+            Typecho_Common::randString(32),
+            _t('* 接口保护'),
+            _t('加盐保护 API 接口不被滥用，自动生成禁止自行设置。')
+        );
+        $t->setAttribute('class', 'hidden');
+        $form->addInput($t);
     }
     
     /**
@@ -95,11 +112,13 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
         $options = Typecho_Widget::widget('Widget_Options');
         $set = $options->plugin('AplayerFixed');
         $cssUrl = Helper::options()->pluginUrl . '/AplayerFixed/';
+        $rewrite='';if(Helper::options()->rewrite==0){$rewrite='index.php/';}
+        $apiurl=Helper::options()->rootUrl.'/'.$rewrite.'meting';
          echo '<script src="' . $cssUrl . 'APlayer.min.js" data-no-instant></script>';
          ?>
  <script data-no-instant>
 (function () { function loadAPlayer(container, meting, arg) { 
-const meting_api = 'https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r'; 
+const meting_api = '<?php echo $apiurl;?>?server=:server&type=:type&id=:id&r=:r'; 
 let url = meting_api .replace(':server', meting.server) .replace(':type', meting.type) .replace(':id', meting.id) .replace(':auth', meting.auth) .replace(':r', Math.random());
     return new Promise((resolve) => {
         fetch(url)
@@ -144,16 +163,14 @@ async function initAPlayer(meting, arg) {
         if (isInitialLoad === false) {document.body.appendChild(div);
     }});
     <?php endif; ?>
-    //默认隐藏歌词
-    ap.lrc.hide();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     if (window.APlayer && window.fetch) {
         const meting = {
-            server: "netease",
+            server: "<?php echo $set->getype; ?>",
             type: "playlist",
-            id: "<?php if($set->gedanid){echo $set->gedanid;}else{echo '876761898';}?>",
+            id: "<?php echo $set->gedanid; ?>",
         };
         const arg = {
             fixed: true,
@@ -170,4 +187,11 @@ document.addEventListener('DOMContentLoaded', function () {
 })();</script>
          <?php
     }
+    public static function deleteFile()
+	{
+		$path = __DIR__ . '/cache/playlist/';
+		foreach (glob( $path. '*.json') as $filename) {
+		   unlink($filename);
+		}
+	}
 }

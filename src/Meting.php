@@ -822,14 +822,34 @@ class Meting
             $url = 'https://p3.music.126.net/'.$this->netease_encryptId($id).'/'.$id.'.jpg?param='.$size.'y'.$size;
             break;
             case 'tencent':
+            $file_path = __DIR__ . '/../cache/playlist/tencent_' . $_GET['yid'] . '.json';
             
-            $albumMid=file_get_contents('https://y.qq.com/n/ryqq/songDetail/'.$id);
-            if (preg_match('/albumMid":"([^"]+)"/', $albumMid, $matches)) {
-                $albumMid = $matches[1];
-            $url = 'https://y.gtimg.cn/music/photo_new/T002R'.$size.'x'.$size.'M000'.$albumMid.'.jpg?max_age=2592000';
+            
+             if (file_exists($file_path)) {
+            $json = file_get_contents($file_path);
+            $data = json_decode($json, true);
+            foreach ($data as &$item) {
+                if($item['pic_id']===$id){
+            if(isset($item['albumMid'])){
+            $albumMid=$item['albumMid'];
             }else{
-            $url = 'https://y.gtimg.cn/music/photo_new/T002R'.$size.'x'.$size.'M000'.$id.'.jpg?max_age=2592000';
+            $albumMid=file_get_contents('https://y.qq.com/n/ryqq/songDetail/'.$id);
+            preg_match('/albumMid":"([^"]+)"/', $albumMid, $matches);
+            $albumMid = $matches[1];
+            $item['albumMid']=$albumMid;
+            echo $item['albumMid'];
             }
+            break;
+                }
+            } 
+           
+            $updatedJsonString = json_encode($data);
+            file_put_contents($file_path, $updatedJsonString);
+
+             }else{$albumMid=$id;}
+            
+            $url = 'https://y.gtimg.cn/music/photo_new/T002R'.$size.'x'.$size.'M000'.$albumMid.'.jpg?max_age=2592000';
+            
             break;
             case 'xiami':
             $format = $this->format;

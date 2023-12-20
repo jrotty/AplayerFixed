@@ -74,10 +74,11 @@ if ($type == 'playlist') {
         }
         
         $playlist[] = array(
-            'title'   => $song->name,
+            'pic_id' =>$song->pic_id,
+            'title'  => $song->name,
             'author' => $author,
             'url'    => API_URI . '?server=' . $song->source . '&type=url&id=' . $song->url_id . (AUTH ? '&auth=' . auth($song->source . 'url' . $song->url_id) : ''),
-            'pic'    => API_URI . '?server=' . $song->source . '&type=pic&id=' . $song->pic_id . (AUTH ? '&auth=' . auth($song->source . 'pic' . $song->pic_id) : ''),
+            'pic'    => API_URI . '?server=' . $song->source . '&yid='.$id.'&type=pic&id=' . $song->pic_id . (AUTH ? '&auth=' . auth($song->source . 'pic' . $song->pic_id) : ''),
             'lrc'    => API_URI . '?server=' . $song->source . '&type=lrc&id=' . $song->lyric_id . (AUTH ? '&auth=' . auth($song->source . 'lrc' . $song->lyric_id) : '')
         );
     }

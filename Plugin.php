@@ -4,7 +4,7 @@
  * 
  * @package AplayerFixed
  * @author 泽泽
- * @version 1.1.0
+ * @version 1.1.1
  * @link https://store.typecho.work
  */
 class AplayerFixed_Plugin implements Typecho_Plugin_Interface

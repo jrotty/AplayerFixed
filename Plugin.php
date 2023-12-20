@@ -4,7 +4,7 @@
  * 
  * @package AplayerFixed
  * @author 泽泽
- * @version 1.1.1
+ * @version 1.1.3
  * @link https://store.typecho.work
  */
 class AplayerFixed_Plugin implements Typecho_Plugin_Interface
@@ -105,7 +105,7 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
         $cssUrl = Helper::options()->pluginUrl . '/AplayerFixed/';
          echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . 'APlayer.min.css" />';
          if($set->weizhi=='right'){
-         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . 'right.css" />';
+         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . 'right.css?2023" />';
          }
     }
     public static function footer() {
@@ -117,7 +117,8 @@ class AplayerFixed_Plugin implements Typecho_Plugin_Interface
          echo '<script src="' . $cssUrl . 'APlayer.min.js" data-no-instant></script>';
          ?>
  <script data-no-instant>
-(function () { function loadAPlayer(container, meting, arg) { 
+(function () { 
+function loadAPlayer(container, meting, arg) { 
 const meting_api = '<?php echo $apiurl;?>?server=:server&type=:type&id=:id&r=:r'; 
 let url = meting_api .replace(':server', meting.server) .replace(':type', meting.type) .replace(':id', meting.id) .replace(':auth', meting.auth) .replace(':r', Math.random());
     return new Promise((resolve) => {
@@ -163,9 +164,12 @@ async function initAPlayer(meting, arg) {
         if (isInitialLoad === false) {document.body.appendChild(div);
     }});
     <?php endif; ?>
+    
+    
+    div.querySelector('.aplayer-icon-lrc').click();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+
     if (window.APlayer && window.fetch) {
         const meting = {
             server: "<?php echo $set->getype; ?>",
@@ -183,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         initAPlayer(meting, arg);
     }
-});
+
 })();</script>
          <?php
     }

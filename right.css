@@ -1,6 +1,7 @@
 .aplayer.aplayer-fixed {
     left: unset !important;
     color: #000;
+    width: 100%;
 }
 .aplayer.aplayer-fixed .aplayer-body{
     left: unset !important;

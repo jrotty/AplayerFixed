@@ -8,7 +8,7 @@ Aplayer to Typecho背景音乐插件，支持InstantClick与常规pjax的主题
   
 - 支持设置播放顺序：顺序播放或随机
   
-- 支持调用网易云音乐歌单：依赖`api.i-meto.com`的`api`
+- 支持调用网易云/QQ音乐歌单(内置meting音乐解析api)
 
 ### 致谢
 
